@@ -15,6 +15,7 @@
         }
     });
 
+
     $('#focusedInput').keyup(function() {
         var empty = false;
             if ($(this).val() == '') {
@@ -28,68 +29,73 @@
     });
 
     $("#focusedInput").keyup(function(event){
-    	if(event.keyCode == 13){
-   			var globalDiv = document.getElementById('omg');
+    	var mesString = document.getElementById("focusedInput").value;
+    	var email = document.getElementById("inputEmail").value;
+    	if (document.getElementById("focusedInput").value!=''){
+	    	if(event.keyCode == 13){
+	   			var globalDiv = document.getElementById('omg');
 
-   			var nameString = document.getElementById("nameInput").value;
-   			var mesString = document.getElementById("focusedInput").value;
-   			console.log (nameString + " " + mesString);
-   			
-   			var today = new Date();
-			var dd = today.getDate();
-			var mm = today.getMonth()+1; //January is 0!
-			var yyyy = today.getFullYear();
+	   			var nameString = document.getElementById("nameInput").value;
+	   			
+	   			var today = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth()+1; //January is 0!
+				var yyyy = today.getFullYear();
 
-			if(dd<10) {
-			    dd='0'+dd
-			} 
+				if(dd<10) {
+				    dd='0'+dd
+				} 
 
-			if(mm<10) {
-			    mm='0'+mm
-			} 
+				if(mm<10) {
+				    mm='0'+mm
+				} 
 
-			today = dd+'.'+mm+'.'+yyyy;
+				today = dd+'.'+mm+'.'+yyyy;
 
-            if(yourGlobalVariable>0){     
-                var sep = document.createElement("div");
-                sep.setAttribute("class","list-group-separator");
-                globalDiv.appendChild(sep);
-            }
+	            if(yourGlobalVariable>0){     
+	                var sep = document.createElement("div");
+	                sep.setAttribute("class","list-group-separator");
+	                globalDiv.appendChild(sep);
+	            }
 
-        	var newDiv = document.createElement("div");
-            newDiv.setAttribute("class","list-group-item");
-            globalDiv.appendChild(newDiv);
+	        	var newDiv = document.createElement("div");
+	            newDiv.setAttribute("class","list-group-item");
+	            globalDiv.appendChild(newDiv);
 
-            var imgDiv = document.createElement("div");
-            imgDiv.setAttribute("class","row-action-primary");
-            newDiv.appendChild(imgDiv);
+	            var imgDiv = document.createElement("div");
+	            imgDiv.setAttribute("class","row-action-primary");
+	            newDiv.appendChild(imgDiv);
 
-        	var img = document.createElement("img");
-        	img.setAttribute("class","circle");
-        	imgDiv.appendChild(img);
+	        	var img = document.createElement("img");
+	        	img.setAttribute("class","circle");
+				var gravatar = 'http://www.gravatar.com/avatar/' + CryptoJS.MD5(email);
+				img.setAttribute("src",gravatar);
+				console.log (gravatar);
+	        	imgDiv.appendChild(img);
 
-        	var contDiv = document.createElement("div");
-        	contDiv.setAttribute("class","row-content");
-        	newDiv.appendChild(contDiv);
+	        	var contDiv = document.createElement("div");
+	        	contDiv.setAttribute("class","row-content");
+	        	newDiv.appendChild(contDiv);
 
-        	var timeDiv = document.createElement("div");
-        	//var timeText = document.createTextNode(today);
-        	timeDiv.setAttribute("class","least-content");
-        	timeDiv.appendChild(document.createTextNode(today));
-        	contDiv.appendChild(timeDiv);
+	        	var timeDiv = document.createElement("div");
+	        	//var timeText = document.createTextNode(today);
+	        	timeDiv.setAttribute("class","least-content");
+	        	timeDiv.appendChild(document.createTextNode(today));
+	        	contDiv.appendChild(timeDiv);
 
-        	var nameUser = document.createElement("h4");
-        	nameUser.setAttribute("class","list-group-item-heading");
-        	nameUser.appendChild(document.createTextNode(nameString));
-        	contDiv.appendChild(nameUser);
+	        	var nameUser = document.createElement("h4");
+	        	nameUser.setAttribute("class","list-group-item-heading");
+	        	nameUser.appendChild(document.createTextNode(nameString));
+	        	contDiv.appendChild(nameUser);
 
-        	var mesDiv = document.createElement("p");
-        	mesDiv.setAttribute("class","list-group-item-text");
-        	mesDiv.appendChild(document.createTextNode(mesString));
-        	contDiv.appendChild(mesDiv);
+	        	var mesDiv = document.createElement("p");
+	        	mesDiv.setAttribute("class","list-group-item-text");
+	        	mesDiv.appendChild(document.createTextNode(mesString));
+	        	contDiv.appendChild(mesDiv);
 
-			yourGlobalVariable++;
-    	}
+				yourGlobalVariable++;
+	    	}
+	    }
 	});
 
 }).call(this);
