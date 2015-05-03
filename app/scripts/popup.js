@@ -1,5 +1,5 @@
 (function() {
-  var checkEmpty, email, foo, name, retrievedObject, user, yourGlobalVariable,loadData,deleteAllData,counter,glovalUrl;
+  var checkEmpty, email, foo, name, retrievedObject, user, yourGlobalVariable,loadData,deleteAllData,counter,globalUrl;
 
   // counter = localStorage.getItem('counter');
   counter = 0;
@@ -18,8 +18,10 @@
   };
 
   //  Get Name & Email from localStorage 
+
   retrievedObject = localStorage.getItem('memory', user);
 
+if (retrievedObject != null){
   foo = JSON.parse(retrievedObject);
 
   email = document.getElementById('inputEmail');
@@ -29,6 +31,7 @@
   name.setAttribute('value', foo.nameString);
 
   email.setAttribute('value', foo.email);
+}
 
 
 //  Check to enable or not Message textfield
@@ -171,15 +174,17 @@
 // check to empty message text field, cant send empty text field
 // when we press Enter we send data to our server
 // loaddata to refresh our body
-// 
 
   $('#focusedInput').keyup(function(event) {
     if (document.getElementById('focusedInput').value !== '') {
       if (event.keyCode === 13) {
+        var emailInput1, nameInput1;
+        emailInput1 = document.getElementById('inputEmail').value;
+        nameInput1 = document.getElementById('nameInput').value;
         var data = JSON.stringify({
           "text": document.getElementById('focusedInput').value,
-          "author_title": nameInput,
-          "image":'http://www.gravatar.com/avatar/' + CryptoJS.MD5(emailInput),
+          "author_title": nameInput1,
+          "image":'http://www.gravatar.com/avatar/' + CryptoJS.MD5(emailInput1),
           "url": globalUrl
         });
 
