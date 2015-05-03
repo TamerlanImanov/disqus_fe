@@ -10,16 +10,16 @@
     email: null,
     nameString: null
   };
-
 //
   Stat = {
     data: {},
     cur: null
   };
+ // console.log (testVar);
+
 
   //  Get Name & Email from localStorage 
-
-  retrievedObject = localStorage.getItem('memory', user);
+retrievedObject = localStorage.getItem('memory', user);
 
 if (retrievedObject != null){
   foo = JSON.parse(retrievedObject);
@@ -56,7 +56,17 @@ if (retrievedObject != null){
   };
 
 
+//Make connection between bg and popup
 
+
+  var port = chrome.extension.connect({name: "Sample Communication"});
+
+  port.postMessage("Hi BackGround");
+
+  port.onMessage.addListener(function(msg) {
+    globalUrl = msg;
+  });
+  // var op= functionUrl();
 
 //  Load data from REST server and check to add new Div
 // to check new div i create counter and save it to localstorage
@@ -70,58 +80,61 @@ if (retrievedObject != null){
         smth = result.objects[smth].id;
         if (counter<smth){
           for (var i=counter;i<result.objects.length;i++){
-            var contDiv, dd, email, globalDiv, gravatar, img, imgDiv, mesDiv, mesString, mm, nameString, nameUser, newDiv, sep, timeDiv, today, yyyy;
-            mesString = document.getElementById('focusedInput').value;
+            console.log (globalUrl + " " + result.objects[i].url);
+            if (globalUrl == result.objects[i].url){
+              var contDiv, dd, email, globalDiv, gravatar, img, imgDiv, mesDiv, mesString, mm, nameString, nameUser, newDiv, sep, timeDiv, today, yyyy;
+              mesString = document.getElementById('focusedInput').value;
 
-            globalDiv = document.getElementById('omg');
+              globalDiv = document.getElementById('omg');
 
-            if (yourGlobalVariable > 0) {
-              sep = document.createElement('div');
-              sep.setAttribute('class', 'list-group-separator');
-              globalDiv.appendChild(sep);
+              if (yourGlobalVariable > 0) {
+                sep = document.createElement('div');
+                sep.setAttribute('class', 'list-group-separator');
+                globalDiv.appendChild(sep);
+              }
+
+              newDiv = document.createElement('div');
+              newDiv.setAttribute('class', 'list-group-item');
+              globalDiv.appendChild(newDiv);
+
+              imgDiv = document.createElement('div');
+              imgDiv.setAttribute('class', 'row-action-primary');
+              newDiv.appendChild(imgDiv);
+
+              img = document.createElement('img');
+              img.setAttribute('class', 'circle');
+              gravatar = result.objects[i].image;
+              img.setAttribute('src', gravatar);
+              imgDiv.appendChild(img);
+
+              contDiv = document.createElement('div');
+              contDiv.setAttribute('class', 'row-content');
+              newDiv.appendChild(contDiv);
+
+              timeDiv = document.createElement('div');
+              timeDiv.setAttribute('class', 'least-content');
+              var time = result.objects[i].pub_time;
+              time = time.substring (0,10);
+              var day = time.substring (8,10);
+              var month = time.substring (5,7);
+              var year = time.substring (2,4);
+              timeDiv.appendChild(document.createTextNode(day+"."+month+"."+year));
+              contDiv.appendChild(timeDiv);
+
+              nameUser = document.createElement('h4');
+              nameUser.setAttribute('class', 'list-group-item-heading');
+              nameUser.appendChild(document.createTextNode(result.objects[i].author_title));
+              contDiv.appendChild(nameUser);
+
+              mesDiv = document.createElement('p');
+              mesDiv.setAttribute('class', 'list-group-item-text');
+              mesDiv.appendChild(document.createTextNode(result.objects[i].text));
+              contDiv.appendChild(mesDiv);
+
+              yourGlobalVariable++;
+
+              counter = result.objects[i].id;
             }
-
-            newDiv = document.createElement('div');
-            newDiv.setAttribute('class', 'list-group-item');
-            globalDiv.appendChild(newDiv);
-
-            imgDiv = document.createElement('div');
-            imgDiv.setAttribute('class', 'row-action-primary');
-            newDiv.appendChild(imgDiv);
-
-            img = document.createElement('img');
-            img.setAttribute('class', 'circle');
-            gravatar = result.objects[i].image;
-            img.setAttribute('src', gravatar);
-            imgDiv.appendChild(img);
-
-            contDiv = document.createElement('div');
-            contDiv.setAttribute('class', 'row-content');
-            newDiv.appendChild(contDiv);
-
-            timeDiv = document.createElement('div');
-            timeDiv.setAttribute('class', 'least-content');
-            var time = result.objects[i].pub_time;
-            time = time.substring (0,10);
-            var day = time.substring (8,10);
-            var month = time.substring (5,7);
-            var year = time.substring (2,4);
-            timeDiv.appendChild(document.createTextNode(day+"."+month+"."+year));
-            contDiv.appendChild(timeDiv);
-
-            nameUser = document.createElement('h4');
-            nameUser.setAttribute('class', 'list-group-item-heading');
-            nameUser.appendChild(document.createTextNode(result.objects[i].author_title));
-            contDiv.appendChild(nameUser);
-
-            mesDiv = document.createElement('p');
-            mesDiv.setAttribute('class', 'list-group-item-text');
-            mesDiv.appendChild(document.createTextNode(result.objects[i].text));
-            contDiv.appendChild(mesDiv);
-
-            yourGlobalVariable++;
-
-            counter = result.objects[i].id;
             // localStorage.setItem('counter', counter);
           }
           document.getElementById('header-body').innerHTML = result.objects.length-1 + " comments"
@@ -130,6 +143,7 @@ if (retrievedObject != null){
   }
 
 //load data when open html
+  
 
   loadData();
 
@@ -170,7 +184,7 @@ if (retrievedObject != null){
 
 // autorefresh 
   setInterval(loadData, 100);
-
+ 
 // check to empty message text field, cant send empty text field
 // when we press Enter we send data to our server
 // loaddata to refresh our body
@@ -204,45 +218,7 @@ if (retrievedObject != null){
       }
     }
   });
-
-
-  tabChanged = function(url) {
-    var lst;
-    if (Stat.cur) {
-      lst = Stat.data[Stat.cur];
-      lst.push(new Date());
-    }
-    Stat.cur = url;
-    lst = Stat.data[url] || [];
-    lst.push(new Date());
-    Stat.data[url] = lst;
-    return Stat.data[url];
-  };
-
-  extractDomain = function(url) {
-    var domain;
-    if (url.indexOf("://") > -1) {
-      domain = url.split('/')[2];
-    } else {
-      domain = url.split('/')[0];
-      domain = domain.split(':')[0];
-    }
-    return domain;
-  };
-
-  chrome.tabs.onActivated.addListener(function(activeInfo) {
-    Stat.curTabId = activeInfo.tabId;
-    return chrome.tabs.get(activeInfo.tabId, function(tab) {
-      var  onlyDomain;
-        onlyDomain = extractDomain(tab.url);
-        if (onlyDomain) {
-          tabChanged(onlyDomain);
-          globalUrl = onlyDomain;
-          console.log (globalUrl);
-        }
-    });
-  });
-
+  
 
   return;
 
