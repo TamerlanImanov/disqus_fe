@@ -159,7 +159,9 @@
         })
 
         loadData();
-        
+        document.getElementById('focusedInput').value = "";
+        document.getElementById("focusedInput").blur();
+        document.getElementById('focusedInput').className = 'form-control empty'; 
       }
     }
   });
