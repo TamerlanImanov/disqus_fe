@@ -3,10 +3,9 @@
 
   counter = localStorage.getItem('counter');
   counter = 0;
-  console.log (counter);
-
   yourGlobalVariable = 0;
 
+// Create User for storing in localstorage
   user = {
     email: null,
     nameString: null
