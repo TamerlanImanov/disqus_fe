@@ -12,6 +12,7 @@
     nameString: null
   };
 
+  //  Get Name & Email from localStorage 
   retrievedObject = localStorage.getItem('memory', user);
 
   foo = JSON.parse(retrievedObject);
@@ -24,6 +25,8 @@
 
   email.setAttribute('value', foo.email);
 
+
+//  Check to enable or not Message textfield
   var emailInput, nameInput;
   emailInput = document.getElementById('inputEmail').value;
   nameInput = document.getElementById('nameInput').value;
@@ -33,6 +36,9 @@
       $('#focusedInput').removeAttr('disabled');
   }
 
+
+//  Check to enable or not Message textfield
+
   checkEmpty = function() {
     if (emailInput.length === 0 || nameInput.length === 0) {
       return true;
@@ -40,6 +46,12 @@
       return false;
     }
   };
+
+
+//  Load data from REST server and check to add new Div
+// to check new div i create counter and save it to localstorage
+// that if counter < our table, when load only element
+
 
   loadData = function(){
     $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/', 
@@ -100,13 +112,17 @@
             counter = i;
             localStorage.setItem('counter', counter);
 
-            console.log (counter + " " + i)
           }
         }
     }});
   }
 
+//load data when open html
+
   loadData();
+
+
+//check to disable input text field and save to localstorage
 
   $('.col-lg-10 > input').keyup(function() {
     user.email = document.getElementById('inputEmail').value;
@@ -126,6 +142,8 @@
     }
   });
 
+//change class when empy message textfield or not 
+
   $('#focusedInput').keyup(function() {
     var empty;
     empty = false;
@@ -138,6 +156,12 @@
       document.getElementById('focusedInput').className = 'form-control';
     }
   });
+
+
+// check to empty message text field, cant send empty text field
+// when we press Enter we send data to our server
+// loaddata to refresh our body
+// 
 
   $('#focusedInput').keyup(function(event) {
     if (document.getElementById('focusedInput').value !== '') {
