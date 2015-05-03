@@ -25,9 +25,9 @@
     return res;
   };
 
-  // $('#focusedInput').keyup(function() {
-  //   return console.log("omg");
-  // });
+  $('#focusedInput').keyup(function() {
+    return console.log("omg");
+  });
 
   tabChanged = function(url) {
     var lst;
