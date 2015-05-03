@@ -1,7 +1,7 @@
 (function() {
-  var checkEmpty, email, foo, name, retrievedObject, user, yourGlobalVariable,loadData,deleteAllData,counter;
+  var checkEmpty, email, foo, name, retrievedObject, user, yourGlobalVariable,loadData,deleteAllData,counter,glovalUrl;
 
-  counter = localStorage.getItem('counter');
+  // counter = localStorage.getItem('counter');
   counter = 0;
   yourGlobalVariable = 0;
 
@@ -9,6 +9,12 @@
   user = {
     email: null,
     nameString: null
+  };
+
+//
+  Stat = {
+    data: {},
+    cur: null
   };
 
   //  Get Name & Email from localStorage 
@@ -47,6 +53,8 @@
   };
 
 
+
+
 //  Load data from REST server and check to add new Div
 // to check new div i create counter and save it to localstorage
 // that if counter < our table, when load only element
@@ -55,8 +63,10 @@
   loadData = function(){
     $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/', 
       success: function(result){
-        if (counter<result.objects.length){
-          for (var i=counter+1;i<result.objects.length;i++){
+        var smth = result.objects.length-1;
+        smth = result.objects[smth].id;
+        if (counter<smth){
+          for (var i=counter;i<result.objects.length;i++){
             var contDiv, dd, email, globalDiv, gravatar, img, imgDiv, mesDiv, mesString, mm, nameString, nameUser, newDiv, sep, timeDiv, today, yyyy;
             mesString = document.getElementById('focusedInput').value;
 
@@ -108,10 +118,10 @@
 
             yourGlobalVariable++;
 
-            counter = i;
-            localStorage.setItem('counter', counter);
-
+            counter = result.objects[i].id;
+            // localStorage.setItem('counter', counter);
           }
+          document.getElementById('header-body').innerHTML = result.objects.length-1 + " comments"
         }
     }});
   }
@@ -119,7 +129,6 @@
 //load data when open html
 
   loadData();
-
 
 //check to disable input text field and save to localstorage
 
@@ -156,6 +165,8 @@
     }
   });
 
+// autorefresh 
+  setInterval(loadData, 100);
 
 // check to empty message text field, cant send empty text field
 // when we press Enter we send data to our server
@@ -165,11 +176,11 @@
   $('#focusedInput').keyup(function(event) {
     if (document.getElementById('focusedInput').value !== '') {
       if (event.keyCode === 13) {
-
         var data = JSON.stringify({
           "text": document.getElementById('focusedInput').value,
           "author_title": nameInput,
-          "image":'http://www.gravatar.com/avatar/' + CryptoJS.MD5(emailInput)
+          "image":'http://www.gravatar.com/avatar/' + CryptoJS.MD5(emailInput),
+          "url": globalUrl
         });
 
         $.ajax({
@@ -188,6 +199,45 @@
       }
     }
   });
+
+
+  tabChanged = function(url) {
+    var lst;
+    if (Stat.cur) {
+      lst = Stat.data[Stat.cur];
+      lst.push(new Date());
+    }
+    Stat.cur = url;
+    lst = Stat.data[url] || [];
+    lst.push(new Date());
+    Stat.data[url] = lst;
+    return Stat.data[url];
+  };
+
+  extractDomain = function(url) {
+    var domain;
+    if (url.indexOf("://") > -1) {
+      domain = url.split('/')[2];
+    } else {
+      domain = url.split('/')[0];
+      domain = domain.split(':')[0];
+    }
+    return domain;
+  };
+
+  chrome.tabs.onActivated.addListener(function(activeInfo) {
+    Stat.curTabId = activeInfo.tabId;
+    return chrome.tabs.get(activeInfo.tabId, function(tab) {
+      var  onlyDomain;
+        onlyDomain = extractDomain(tab.url);
+        if (onlyDomain) {
+          tabChanged(onlyDomain);
+          globalUrl = onlyDomain;
+          console.log (globalUrl);
+        }
+    });
+  });
+
 
   return;
 
