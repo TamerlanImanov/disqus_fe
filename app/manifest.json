@@ -12,7 +12,11 @@
     "scripts": [
       "scripts/chromereload.js",
       "scripts/background.js",
-      "scripts/popup.js"
+      "scripts/popup.js",
+      "js/ajax.js"
+    ],
+    "pages": [
+      "background.html"
     ]
   },
   "browser_action": {

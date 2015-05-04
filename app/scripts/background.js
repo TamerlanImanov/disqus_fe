@@ -1,5 +1,5 @@
 (function() {
-  var Stat, calc, extractDomain, myTimer, save, tabChanged, updateBadge;
+  var Stat, calc, extractDomain, myTimer, save, tabChanged, updateBadge,newURL;
 
   chrome.runtime.onInstalled.addListener(function(details) {});
 
@@ -8,25 +8,6 @@
     cur: null
   };
 
-
-// var dom;
-// chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-//     if(request.theDOM != ""){
-//         console.log("popup request: "+request.theDOM);
-//         dom = request.theDOM;
-//     }
-// });
- 
-//  chrome.extension.sendRequest({theDOM: "page DOM here"});
-
-
-
-  // functionUrl = function(url){
-  //   document.getElementById('globalDiv').innerHTML = url;
-  //   return url;
-  // } 
-
-// newFunction();
  tabChanged = function(url) {
     var lst;
     if (Stat.cur) {
@@ -53,6 +34,18 @@
     return domain;
   };
 
+  setText = function(onlyDomain){
+    // var countMes = 0;
+    $.ajax({
+      url: 'http://127.0.0.1:8000/api/v1/comment/?url='+onlyDomain, 
+      success: function(result){
+        chrome.browserAction.setBadgeText({
+          text: "" + result.objects.length
+        }); 
+      }
+    }); 
+  }
+
   chrome.tabs.onActivated.addListener(function(activeInfo) {
     Stat.curTabId = activeInfo.tabId;
     return chrome.tabs.get(activeInfo.tabId, function(tab) {
@@ -60,14 +53,16 @@
         onlyDomain = extractDomain(tab.url);
         if (onlyDomain) {
           tabChanged(onlyDomain);
+          newURL=onlyDomain;
+          setText(onlyDomain);
+          // console.log (onlyDomain);
+          // functionUrl(onlyDomain);
           chrome.extension.onConnect.addListener(function(port) {
             port.onMessage.addListener(function(msg) {
-                  console.log("message recieved "+ msg + " omg");
+                  console.log("message recieved "+ msg + " ");
                   port.postMessage(onlyDomain);
             });
           });
-          // console.log (onlyDomain);
-          // functionUrl(onlyDomain);
         }
     });
   });

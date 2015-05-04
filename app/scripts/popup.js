@@ -15,7 +15,7 @@
     data: {},
     cur: null
   };
- // console.log (testVar);
+
 
 
   //  Get Name & Email from localStorage 
@@ -60,13 +60,11 @@ if (retrievedObject != null){
 
 
   var port = chrome.extension.connect({name: "Sample Communication"});
-
-  port.postMessage("Hi BackGround");
+  port.postMessage("new mes");
 
   port.onMessage.addListener(function(msg) {
     globalUrl = msg;
   });
-  // var op= functionUrl();
 
 //  Load data from REST server and check to add new Div
 // to check new div i create counter and save it to localstorage
@@ -74,14 +72,19 @@ if (retrievedObject != null){
 
 
   loadData = function(){
-    $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/', 
+    var countMes = 0;
+    setText(globalUrl);
+    $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/?url='+globalUrl, 
+    // $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/', 
+      
       success: function(result){
-        var smth = result.objects.length-1;
-        smth = result.objects[smth].id;
-        if (counter<smth){
+        countMes = result.objects.length;
+        // console.log(result.objects);
+        // var smth = result.objects.length-1;
+        // smth = result.objects[smth].id;
+        if (counter<countMes){
           for (var i=counter;i<result.objects.length;i++){
-            console.log (globalUrl + " " + result.objects[i].url);
-            if (globalUrl == result.objects[i].url){
+            // console.log (globalUrl + " " + result.objects[i].url);
               var contDiv, dd, email, globalDiv, gravatar, img, imgDiv, mesDiv, mesString, mm, nameString, nameUser, newDiv, sep, timeDiv, today, yyyy;
               mesString = document.getElementById('focusedInput').value;
 
@@ -134,12 +137,17 @@ if (retrievedObject != null){
               yourGlobalVariable++;
 
               counter = result.objects[i].id;
-            }
             // localStorage.setItem('counter', counter);
           }
-          document.getElementById('header-body').innerHTML = result.objects.length-1 + " comments"
+          document.getElementById('header-body').innerHTML = result.objects.length + " comments"
+
         }
-    }});
+        // console.log(countMes);
+        // setBadgeText(""+countMes); 
+        counter = countMes;
+    }
+  });
+    
   }
 
 //load data when open html
