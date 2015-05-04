@@ -38,27 +38,28 @@ if (retrievedObject != null){
   var emailInput, nameInput;
   emailInput = document.getElementById('inputEmail').value;
   nameInput = document.getElementById('nameInput').value;
-  if (emailInput.length === 0 || nameInput.length === 0) {
-      $('#focusedInput').attr('disabled', 'disabled');
-  } else {
-      $('#focusedInput').removeAttr('disabled');
-  }
-
 
 //  Check to enable or not Message textfield
 
   checkEmpty = function() {
-    if (emailInput.length === 0 || nameInput.length === 0) {
+    var emailInput1 = document.getElementById('inputEmail').value;
+    var nameInput1 = document.getElementById('nameInput').value;
+    if (emailInput1.length === 0 || nameInput1.length === 0) {
+      $('#focusedInput').attr('disabled', 'disabled');
       return true;
     } else {
+      $('#focusedInput').removeAttr('disabled');
       return false;
     }
   };
 
 
+//set interval to check empty inputs
+
+  setInterval (checkEmpty,1000);
+
+
 //Make connection between bg and popup
-
-
   var port = chrome.extension.connect({name: "Sample Communication"});
   port.postMessage("new mes");
 
@@ -162,17 +163,17 @@ if (retrievedObject != null){
     user.nameString = document.getElementById('nameInput').value;
     localStorage.setItem('memory', JSON.stringify(user));
     var empty;
-    empty = checkEmpty();
-    $('.col-lg-10 > input').each(function() {
-      if ($(this).val() === '') {
-        empty = true;
-      }
-    });
-    if (empty) {
-      $('#focusedInput').attr('disabled', 'disabled');
-    } else {
-      $('#focusedInput').removeAttr('disabled');
-    }
+    checkEmpty();
+    // $('.col-lg-10 > input').each(function() {
+    //   if ($(this).val() === '') {
+    //     empty = true;
+    //   }
+    // });
+    // if (empty) {
+    //   $('#focusedInput').attr('disabled', 'disabled');
+    // } else {
+    //   $('#focusedInput').removeAttr('disabled');
+    // }
   });
 
 //change class when empy message textfield or not 

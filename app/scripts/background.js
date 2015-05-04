@@ -53,6 +53,7 @@
         onlyDomain = extractDomain(tab.url);
         if (onlyDomain) {
           tabChanged(onlyDomain);
+          console.log (onlyDomain);
           newURL=onlyDomain;
           setText(onlyDomain);
           // console.log (onlyDomain);
@@ -66,5 +67,27 @@
         }
     });
   });
+
+  myTimer = function() {
+    if (!Stat.curTabId) {
+      return;
+    }
+    return chrome.tabs.get(Stat.curTabId, function(tab) {
+      var onlyDomain;
+      onlyDomain = extractDomain(tab.url);
+      if (onlyDomain) {
+        chrome.extension.onConnect.addListener(function(port) {
+          port.onMessage.addListener(function(msg) {
+                console.log("message recieved "+ msg + " ");
+                port.postMessage(onlyDomain);
+          });
+        });
+        newURL=onlyDomain;
+        return setText(onlyDomain);
+      }
+    });
+  };
+
+  setInterval(myTimer, 1000);
 
 }).call(this);
