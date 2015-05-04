@@ -8,6 +8,8 @@
     cur: null
   };
 
+
+//check to changing tab or not
  tabChanged = function(url) {
     var lst;
     if (Stat.cur) {
@@ -21,6 +23,8 @@
     return Stat.data[url];
   };
 
+
+//get only domain 
   extractDomain = function(url) {
     var domain;
     if (url.indexOf("://") > -1) {
@@ -34,6 +38,7 @@
     return domain;
   };
 
+//set amount of message to Badge
   setText = function(onlyDomain){
     // var countMes = 0;
     $.ajax({
@@ -68,6 +73,7 @@
     });
   });
 
+//check function to changing url
   myTimer = function() {
     if (!Stat.curTabId) {
       return;

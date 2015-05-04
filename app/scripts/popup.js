@@ -55,8 +55,7 @@ if (retrievedObject != null){
 
 
 //set interval to check empty inputs
-
-  setInterval (checkEmpty,1000);
+  setInterval (checkEmpty,10000);
 
 
 //Make connection between bg and popup
@@ -67,11 +66,15 @@ if (retrievedObject != null){
     globalUrl = msg;
   });
 
+//reply function
+  doSomething = function(){
+    alert("hp[");
+
+  }
+
 //  Load data from REST server and check to add new Div
-// to check new div i create counter and save it to localstorage
+// to check new div I create counter
 // that if counter < our table, when load only element
-
-
   loadData = function(){
     var countMes = 0;
     setText(globalUrl);
@@ -80,13 +83,10 @@ if (retrievedObject != null){
       
       success: function(result){
         countMes = result.objects.length;
-        // console.log(result.objects);
-        // var smth = result.objects.length-1;
-        // smth = result.objects[smth].id;
         if (counter<countMes){
           for (var i=counter;i<result.objects.length;i++){
             // console.log (globalUrl + " " + result.objects[i].url);
-              var contDiv, dd, email, globalDiv, gravatar, img, imgDiv, mesDiv, mesString, mm, nameString, nameUser, newDiv, sep, timeDiv, today, yyyy;
+              var contDiv, dd, email, globalDiv, gravatar, img, imgDiv, mesDiv, mesString, mm, nameString, nameUser, newDiv, sep, timeDiv,replyBut;
               mesString = document.getElementById('focusedInput').value;
 
               globalDiv = document.getElementById('omg');
@@ -132,8 +132,21 @@ if (retrievedObject != null){
 
               mesDiv = document.createElement('p');
               mesDiv.setAttribute('class', 'list-group-item-text');
+              mesDiv.setAttribute('style', 'word-wrap:break-word;width: 80%;');
               mesDiv.appendChild(document.createTextNode(result.objects[i].text));
               contDiv.appendChild(mesDiv);
+
+
+              //check to create button or not 
+              //if email equal yours email will not create
+              if (document.getElementById('inputEmail').value != result.objects[i].email){
+                replyBut = document.createElement('a');
+                replyBut.setAttribute('class','btn btn-flat btn-primary');
+                replyBut.setAttribute('style','margin-left:45%;margin-top:-8%;position:absolute;');
+                replyBut.setAttribute('onclick','doSomething();');
+                replyBut.innerHTML = 'reply';
+                contDiv.appendChild(replyBut);
+              }
 
               yourGlobalVariable++;
 
@@ -152,32 +165,18 @@ if (retrievedObject != null){
   }
 
 //load data when open html
-  
-
   loadData();
 
 //check to disable input text field and save to localstorage
-
   $('.col-lg-10 > input').keyup(function() {
     user.email = document.getElementById('inputEmail').value;
     user.nameString = document.getElementById('nameInput').value;
     localStorage.setItem('memory', JSON.stringify(user));
     var empty;
     checkEmpty();
-    // $('.col-lg-10 > input').each(function() {
-    //   if ($(this).val() === '') {
-    //     empty = true;
-    //   }
-    // });
-    // if (empty) {
-    //   $('#focusedInput').attr('disabled', 'disabled');
-    // } else {
-    //   $('#focusedInput').removeAttr('disabled');
-    // }
   });
 
 //change class when empy message textfield or not 
-
   $('#focusedInput').keyup(function() {
     var empty;
     empty = false;
@@ -197,7 +196,6 @@ if (retrievedObject != null){
 // check to empty message text field, cant send empty text field
 // when we press Enter we send data to our server
 // loaddata to refresh our body
-
   $('#focusedInput').keyup(function(event) {
     if (document.getElementById('focusedInput').value !== '') {
       if (event.keyCode === 13) {
@@ -208,7 +206,8 @@ if (retrievedObject != null){
           "text": document.getElementById('focusedInput').value,
           "author_title": nameInput1,
           "image":'http://www.gravatar.com/avatar/' + CryptoJS.MD5(emailInput1),
-          "url": globalUrl
+          "url": globalUrl,
+          "email":emailInput1
         });
 
         $.ajax({
