@@ -53,11 +53,6 @@ if (retrievedObject != null){
     }
   };
 
-
-//set interval to check empty inputs
-  setInterval (checkEmpty,10000);
-
-
 //Make connection between bg and popup
   var port = chrome.extension.connect({name: "Sample Communication"});
   port.postMessage("new mes");
@@ -65,19 +60,14 @@ if (retrievedObject != null){
   port.onMessage.addListener(function(msg) {
     globalUrl = msg;
   });
-
-//reply function
-  doSomething = function(){
-    alert("hp[");
-
-  }
-
 //  Load data from REST server and check to add new Div
 // to check new div I create counter
 // that if counter < our table, when load only element
   loadData = function(){
     var countMes = 0;
     setText(globalUrl);
+    //create GET request with current url 
+    //and get object, which has url
     $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/?url='+globalUrl, 
     // $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/', 
       
@@ -137,13 +127,21 @@ if (retrievedObject != null){
               contDiv.appendChild(mesDiv);
 
 
-              //check to create button or not 
-              //if email equal yours email will not create
+              // check to create button or not 
+              // if email equal yours email will not create
+              // but it not correctly work
               if (document.getElementById('inputEmail').value != result.objects[i].email){
                 replyBut = document.createElement('a');
                 replyBut.setAttribute('class','btn btn-flat btn-primary');
                 replyBut.setAttribute('style','margin-left:45%;margin-top:-8%;position:absolute;');
                 replyBut.setAttribute('onclick','doSomething();');
+                replyBut.onclick = function(){  
+                  // console.log('opopop');
+                  document.getElementById('focusedInput').className = 'form-control'; 
+                  document.getElementById('focusedInput').value = "@";
+                  document.getElementById("focusedInput").focus();
+                  
+                }
                 replyBut.innerHTML = 'reply';
                 contDiv.appendChild(replyBut);
               }
@@ -190,6 +188,88 @@ if (retrievedObject != null){
     }
   });
 
+
+// just trying to make OAuth2 google
+
+
+  // $('#auo').click(function(event)){
+  //   console.log("asdas");
+    // chrome.browserAction.onClicked.addListener(function() {
+    //    chrome.windows.create({'url': 'http://google.com/', 'type': 'popup'}, function(window) {
+    //  });
+    // });
+  // }
+
+  // $("#auo").click(function () {
+    //  $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/?url='+globalUrl, 
+    //   success: function(result){
+
+    //   };
+    // // $.ajax({url: 'http://127.0.0.1:8000/api/v1/comment/', 
+      
+    //   success: function(result){
+    // chrome.windows.create({
+
+    //   type: 'popup',
+    //   url:
+    //    "https://accounts.google.com/o/oauth2/auth?redirect_uri=http%3A%2F%2Fmysite.com%2Fgglogin&response_type=code&client_id=730737195564-gqb6cgtjhoatc1id5smmgka1skbb42k2.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile"
+    // }, function (newWindow) {
+    //   console.log(newWindow);
+    //   // chrome.tabs.executeScript(newWindow.tabs[0].id, {
+    //   //   code: 'document.write("hello world");'
+    //   // });
+    // });
+  
+
+
+//   $(function () {
+//     var extractToken = function(hash) {
+//       var match = hash.match(/access_token=([\w-]+)/);
+//       return !!match && match[1];
+//     };
+
+//     var CLIENT_ID = "730737195564-gqb6cgtjhoatc1id5smmgka1skbb42k2.apps.googleusercontent.com";
+//     var AUTHORIZATION_ENDPOINT = "https://soundcloud.com/connect";
+//     var RESOURCE_ENDPOINT = "https://api.soundcloud.com/me";
+
+//     var token = extractToken(document.location.hash);
+//     if (token) {
+//       // $('div.authenticated').show();
+//       chrome.windows.create({
+//         type: 'popup',
+//         url: ""
+//       });
+
+//       $('span.token').text(token);
+
+//       $.ajax({
+//           url: RESOURCE_ENDPOINT
+//         , beforeSend: function (xhr) {
+//             xhr.setRequestHeader('Authorization', "OAuth " + token);
+//             xhr.setRequestHeader('Accept',        "application/json");
+//           }
+//         , success: function (response) {
+//             var container = $('span.user');
+//             if (response) {
+//               container.text(response.username);
+//             } else {
+//               container.text("An error occurred.");
+//             }
+//           }
+//       });
+//     } else {
+//       $('div.authenticate').show();
+
+//       var authUrl = AUTHORIZATION_ENDPOINT + 
+//         "?response_type=token" +
+//         "&client_id="    + clientId +
+//         "&redirect_uri=" + window.location;
+
+//       $("a.connect").attr("href", authUrl);
+//     }
+//   });
+// });
+
 // autorefresh 
   setInterval(loadData, 100);
  
@@ -227,6 +307,10 @@ if (retrievedObject != null){
     }
   });
   
+  checkEmpty();
+
+//set interval to check empty inputs
+  setInterval (checkEmpty,100000);
 
   return;
 
